@@ -24,3 +24,33 @@ func TestTokenRegistry(t *testing.T) {
 		}
 	}
 }
+
+func TestEquityRegistrySeparation(t *testing.T) {
+	stablecoins, equities := 0, 0
+	for _, token := range Tokens() {
+		switch token.AssetClass {
+		case ClassStablecoin:
+			stablecoins++
+		case ClassTokenizedEquity:
+			equities++
+			if token.Network != "eip155:1" || token.Underlying == "" || token.Issuer == "" {
+				t.Fatalf("incomplete equity entry: %+v", token)
+			}
+			in := EquityTokenRequest{Address: "0x0000000000000000000000000000000000000001", Network: token.Network, Contract: token.Contract}
+			if _, err := in.Request(); err != nil {
+				t.Fatal(err)
+			}
+		default:
+			t.Fatalf("unknown asset class: %+v", token)
+		}
+	}
+	if stablecoins != 6 || equities != 3 {
+		t.Fatalf("unexpected registry composition: %d stablecoins, %d equities", stablecoins, equities)
+	}
+	if _, err := (EquityTokenRequest{Address: "0x0000000000000000000000000000000000000001", Network: "eip155:1", Contract: "0xdac17f958d2ee523a2206206994597c13d831ec7"}).Request(); err == nil {
+		t.Fatal("stablecoin accepted by the equity capability")
+	}
+	if _, err := (EquityTokenRequest{Address: "0x0000000000000000000000000000000000000001", Network: "eip155:1", Contract: "0x0000000000000000000000000000000000000000"}).Request(); err == nil {
+		t.Fatal("unregistered contract accepted by the equity capability")
+	}
+}

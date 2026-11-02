@@ -51,6 +51,10 @@ Only EVM EOAs are supported for first-release login; smart-contract-wallet signa
 
 Engineering policy: root AGENTS.md, baseline 2026-09-07, is mirrored in docs/engineering-policy.md so this repository can be cloned independently.
 
+### Tokenized-equity reads (RWA, API 0.11.0)
+
+Curated xStocks entries on Ethereum (AAPLx/TSLAX/AMATx with `asset_class`/`underlying`/`issuer` in the token registry) add two capabilities: `data.rwa.token_balance` (`/v1/data/rwa/token-balance`, MCP `get_rwa_token_balance`) for same-block decimals-verified balances, and `market.equity_price` (`/v1/prices/equity`, MCP `get_equity_price`) for reference prices of the underlying stock via a credential-free Pyth Hermes adapter that fails closed. A balance is an on-chain observation, not eligibility or a compliance verdict; prices are reference values, not quotes. The stablecoin capabilities and the fixed three-asset common snapshot are unchanged. Migration 009 seeds the route. See [RWA capability guide](docs/rwa-token-balances.md) and root ADR 0015.
+
 ### LI.FI swaps (EVM preview)
 
 Set `LIFI_API_KEY` in the server runtime secret environment, or explicitly set

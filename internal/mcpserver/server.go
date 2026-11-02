@@ -62,14 +62,15 @@ func buildServer(service *operations.Service, workspace func(context.Context) st
 }
 func buildServerWithRooms(service *operations.Service, workspace func(context.Context) string, msg *messaging.Service, discussion *rooms.Service) (*mcp.Server, []*mcp.Tool) {
 	var tools []*mcp.Tool
-	server := mcp.NewServer(&mcp.Implementation{Name: "0xbot", Version: "0.10.0"}, &mcp.ServerOptions{Instructions: instructions})
+	server := mcp.NewServer(&mcp.Implementation{Name: "0xbot", Version: "0.11.0"}, &mcp.ServerOptions{Instructions: instructions})
 	addRoomTools(server, &tools, discussion)
 	addMessageTools(server, &tools, msg)
 	addSwapTools(server, &tools, service, workspace)
 	addPriceTools(server, &tools, service, workspace)
 	addNFTTools(server, &tools, service, workspace)
 	addTokenBoundTools(server, &tools, service, workspace)
-	addTool(server, &tools, &mcp.Tool{Name: "get_supported_tokens", Description: "List supported USDT/USDC contracts by network, exact address, decimals and issuance variant. BSC uses Binance-Peg; Polygon USDT is USDT0 and USDC is Circle-issued. Polygon USDC.e is not included."}, func(ctx context.Context, req *mcp.CallToolRequest, in struct{}) (*mcp.CallToolResult, struct {
+	addRWATools(server, &tools, service, workspace)
+	addTool(server, &tools, &mcp.Tool{Name: "get_supported_tokens", Description: "List curated token contracts by network, exact address, decimals, issuance variant and asset_class. Stablecoins: USDT/USDC (BSC Binance-Peg; Polygon USDT is USDT0 and USDC is Circle-issued; USDC.e excluded). Tokenized equities (asset_class=tokenized_equity, Ethereum): Backed xStocks with issuer and underlying stock ticker; use get_rwa_token_balance for their balances."}, func(ctx context.Context, req *mcp.CallToolRequest, in struct{}) (*mcp.CallToolResult, struct {
 		Tokens []data.Token `json:"tokens"`
 	}, error) {
 		return nil, struct {

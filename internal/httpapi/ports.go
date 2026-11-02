@@ -54,6 +54,7 @@ type operationReader interface {
 type balanceUseCase interface {
 	AssetPrice(context.Context, string, prices.AssetRequest) (prices.Result, error)
 	TokenPrice(context.Context, string, prices.TokenRequest) (prices.Result, error)
+	EquityPrice(context.Context, string, prices.EquityRequest) (prices.Result, error)
 	NFTDetail(context.Context, string, nft.TokenRequest) (nft.DetailResult, error)
 	NFTOwner(context.Context, string, nft.TokenRequest) (nft.OwnerResult, error)
 	NFTBalance(context.Context, string, nft.BalanceRequest) (nft.BalanceResult, error)
@@ -62,6 +63,7 @@ type balanceUseCase interface {
 	Balance(context.Context, string, data.Request) (data.Result, error)
 	TokenBalance(context.Context, string, data.TokenRequest) (data.Result, error)
 	Balances(context.Context, string, data.Request) (data.BalancesResult, error)
+	RWATokenBalance(context.Context, string, data.EquityTokenRequest) (data.Result, error)
 }
 type settingsPort interface {
 	List(context.Context) ([]routing.Setting, error)

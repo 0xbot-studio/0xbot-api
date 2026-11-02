@@ -17,6 +17,7 @@ import (
 	"0xbot.org/api/internal/providers/llamaprices"
 	"0xbot.org/api/internal/providers/padininbox"
 	"0xbot.org/api/internal/providers/padinrooms"
+	"0xbot.org/api/internal/providers/pythprices"
 	"0xbot.org/api/internal/rooms"
 	"0xbot.org/api/internal/routing"
 	"0xbot.org/api/internal/swaps"
@@ -60,6 +61,7 @@ func run() error {
 	}
 	router := routing.New([]data.Provider{
 		llamaprices.New(),
+		pythprices.New(),
 		swapProvider,
 		padininbox.Provider{DB: db},
 		padinrooms.Provider{DB: db},
@@ -73,6 +75,7 @@ func run() error {
 		"padin-rooms":        {Name: "PADIN Rooms", Network: "discussion", Networks: []string{}},
 		"padin-inbox":        {Name: "PADIN Inbox", Network: "eip155:1", Networks: []string{"eip155:1"}},
 		"defillama-prices":   {Name: "DefiLlama · prices", Website: "https://defillama.com", Network: "market", Networks: data.NetworkIDs()},
+		"pyth-prices":        {Name: "Pyth · equity prices", Website: "https://pyth.network", Network: "eip155:1", Networks: []string{"eip155:1"}},
 		"publicnode":         {Name: "PublicNode", Website: "https://www.publicnode.com"},
 		"drpc":               {Name: "dRPC", Website: "https://drpc.org"},
 		"publicnode-bsc":     {Name: "PublicNode · BSC", Website: "https://bsc.publicnode.com"},

@@ -85,8 +85,10 @@ func (a *API) Handler() http.Handler {
 	r.With(a.access).Post("/v1/data/balance", a.balance)
 	r.With(a.access).Post("/v1/data/token-balance", a.tokenBalance)
 	r.With(a.access).Post("/v1/data/balances", a.balances)
+	r.With(a.access).Post("/v1/data/rwa/token-balance", a.rwaTokenBalance)
 	r.With(a.access).Post("/v1/nft/token", a.nftDetail)
 	r.With(a.access).Post("/v1/prices/asset", a.assetPrice)
+	r.With(a.access).Post("/v1/prices/equity", a.equityPrice)
 	r.With(a.access).Post("/v1/swaps/tokens", a.swapTokens)
 	r.With(a.access).Post("/v1/swaps/quote", a.swapQuote)
 	r.With(a.access).Post("/v1/swaps/status", a.swapStatus)
@@ -111,6 +113,9 @@ func (a *API) capabilities(w http.ResponseWriter, r *http.Request) {
 	for _, c := range capabilities.All() {
 		networks := data.NetworkIDs()
 		if strings.HasPrefix(c.ID, "messaging.") {
+			networks = []string{"eip155:1"}
+		}
+		if c.ID == capabilities.RWATokenBalance || c.ID == capabilities.EquityPrice {
 			networks = []string{"eip155:1"}
 		}
 		if c.ID == "market.asset_price" || strings.HasPrefix(c.ID, "rooms.") {

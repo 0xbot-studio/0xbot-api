@@ -56,7 +56,7 @@ func TestDiscoveryOverHTTP(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(list.Tools) != 27 {
+	if len(list.Tools) != 29 {
 		t.Fatalf("unexpected tool count: %d", len(list.Tools))
 	}
 	adminInstructions, definitions := Definitions()

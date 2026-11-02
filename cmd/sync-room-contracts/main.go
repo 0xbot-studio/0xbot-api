@@ -18,7 +18,7 @@ func main() {
 	if e := json.Unmarshal(contract.Spec, &doc); e != nil {
 		panic(e)
 	}
-	doc["info"].(map[string]any)["version"] = "0.10.1"
+	doc["info"].(map[string]any)["version"] = "0.11.0"
 	schemas := doc["components"].(map[string]any)["schemas"].(map[string]any)
 	doc["components"].(map[string]any)["securitySchemes"].(map[string]any)["adminSession"] = map[string]any{"type": "apiKey", "in": "cookie", "name": "oxb_admin_session"}
 	scopes := doc["components"].(map[string]any)["securitySchemes"].(map[string]any)["mcpOAuth"].(map[string]any)["flows"].(map[string]any)["authorizationCode"].(map[string]any)["scopes"].(map[string]any)

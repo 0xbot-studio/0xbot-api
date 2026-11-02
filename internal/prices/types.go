@@ -44,6 +44,29 @@ func (r *TokenRequest) Validate() error {
 	return nil
 }
 
+// EquityRequest prices the underlying stock of a curated tokenized-equity
+// contract (market.equity_price). The registry lookup keeps ticker guessing out.
+type EquityRequest struct {
+	Network  string `json:"network" jsonschema:"Network of a curated tokenized-equity contract; Ethereum eip155:1 in the first release"`
+	Contract string `json:"contract" jsonschema:"Exact curated tokenized-equity contract with asset_class=tokenized_equity; never a stock ticker"`
+	Provider string `json:"provider,omitempty"`
+}
+
+func (r *EquityRequest) Validate() error {
+	token, ok := data.FindEquityToken(r.Network, r.Contract)
+	if !ok {
+		return data.ErrInput
+	}
+	if _, supported := data.FindNetwork(token.Network); !supported {
+		return data.ErrInput
+	}
+	r.Contract, r.Network = token.Contract, token.Network
+	if r.Provider == "" {
+		r.Provider = "auto"
+	}
+	return nil
+}
+
 type Quote struct {
 	Asset       string    `json:"asset" jsonschema:"BTC/ETH/BNB for asset quote, empty for contract quote"`
 	Network     string    `json:"network" jsonschema:"Empty for global asset quote; otherwise CAIP-2 network"`

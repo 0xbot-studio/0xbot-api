@@ -34,7 +34,7 @@ func NewForNetwork(id, endpoint, network string, client *http.Client) *Provider 
 func (p *Provider) Supports(network string) bool { return p.network == network }
 func (p *Provider) ID() string                   { return p.id }
 func (p *Provider) CapabilityIDs() []string {
-	return []string{capabilities.NativeBalance, capabilities.TokenBalance, capabilities.CommonBalances, capabilities.ResolveTokenBoundAccount, capabilities.GetTokenBoundAccount, capabilities.NFTDetail, capabilities.NFTOwner, capabilities.NFTBalance}
+	return []string{capabilities.NativeBalance, capabilities.TokenBalance, capabilities.CommonBalances, capabilities.RWATokenBalance, capabilities.ResolveTokenBoundAccount, capabilities.GetTokenBoundAccount, capabilities.NFTDetail, capabilities.NFTOwner, capabilities.NFTBalance}
 }
 func (p *Provider) rpc(ctx context.Context, method string, params []any) (string, error) {
 	body, _ := json.Marshal(map[string]any{"jsonrpc": "2.0", "id": 1, "method": method, "params": params})
@@ -197,6 +197,8 @@ func (p *Provider) tokenAt(ctx context.Context, r data.Request, block string) (d
 
 // All three reads use one provider and one block. Never return partial results
 // as a successful snapshot; automatic routing retries the complete read set.
+// Only stablecoin-class entries participate; tokenized-equity reads are a
+// separate capability and must not change the fixed three-asset contract.
 func (p *Provider) Balances(ctx context.Context, r data.Request) ([]data.Balance, error) {
 	if err := r.Validate(); err != nil || r.Contract != "" {
 		return nil, data.ErrInput
@@ -211,7 +213,7 @@ func (p *Provider) Balances(ctx context.Context, r data.Request) ([]data.Balance
 	}
 	out := []data.Balance{native}
 	for _, token := range data.Tokens() {
-		if token.Network != r.Network {
+		if token.Network != r.Network || token.AssetClass != data.ClassStablecoin {
 			continue
 		}
 		r.Contract = token.Contract
@@ -222,6 +224,19 @@ func (p *Provider) Balances(ctx context.Context, r data.Request) ([]data.Balance
 		out = append(out, b)
 	}
 	return out, nil
+}
+
+// RWATokenBalance reads a curated tokenized-equity contract balance at the
+// observed block. The request was already validated against the equity subset.
+func (p *Provider) RWATokenBalance(ctx context.Context, r data.Request) (data.Balance, error) {
+	if _, ok := data.FindEquityToken(r.Network, r.Contract); !ok {
+		return data.Balance{}, data.ErrInput
+	}
+	block, err := p.block(ctx, r)
+	if err != nil {
+		return data.Balance{}, err
+	}
+	return p.tokenAt(ctx, r, block)
 }
 
 var _ data.Provider = (*Provider)(nil)
