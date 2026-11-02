@@ -19,7 +19,7 @@ Ethereum `eip155:1` only. Issuer: Backed Assets (xStocks, 1:1 tokenized exposure
 | `0xcf2810d523c2efb7e4d3afa2629e635d2032ddb4` | TSLAX | TSLA | 18 |
 | `0xe9fa01197b7e836982a1cab03fe591f7e331e313` | AMATx | AMAT | 18 |
 
-Provenance: addresses cross-checked between Etherscan and Ethplorer listings (2026-11-02) and restricted to this three-entry set; INTCx was excluded because two distinct upstream equity feeds exist with no authoritative tiebreaker. Final on-chain `symbol()/name()/decimals()` verification against a public RPC is a deployment-stage check (see Verification).
+Provenance: addresses cross-checked between Etherscan and Ethplorer listings (2026-11-02) and restricted to this three-entry set; INTCx was excluded because two distinct upstream equity feeds exist with no authoritative tiebreaker. On-chain verification via PublicNode on 2026-11-03 confirmed `symbol()`, `name()`, `decimals()=18` and deployed code for all three contracts (on-chain `name()` values are mirrored in the registry).
 
 ## Balance
 
@@ -55,6 +55,6 @@ Not an executable quote, NAV, or valuation.
 
 Offline: registry separation and class-shape tests; evmrpc same-block/decimals verification and three-asset snapshot exclusion tests; routing capability eligibility (undeclared providers never receive RWA calls) and fallback; per-workspace limiter and shared price budget; REST/MCP contract parity against OpenAPI 0.11.0; Pyth adapter fixture tests for exact decimals, confidence derivation, staleness, 401/429 mapping and upstream rate cap. Full `go vet`, `go build` and `go test -race ./...` pass.
 
-Not verified in the development environment (blocked network): live on-chain reads of the three contracts (code presence, symbol/name/decimals) and the Hermes `/v2/updates/price/latest` endpoint, which returned 401 from the development network. Both are deployment-stage checks on the release host; the provider fails closed until then.
+Online: read-only `symbol()/name()/decimals()/eth_getCode` calls against PublicNode verified all three curated contracts on 2026-11-03; no account, key or transaction was involved. Still open at deployment time: Hermes `/v2/updates/price/latest` reachability from the release host — it returned 401 from the development network on 2026-11-02/03 while the catalog endpoint works; the price provider fails closed until verified.
 
 Reference: [ADR 0015](https://github.com/0xbot-studio/0xbot/blob/main/docs/adr/0015-rwa-equity-reads.md), [xStocks](https://xstocks.fi), [Pyth Hermes](https://docs.pyth.network).

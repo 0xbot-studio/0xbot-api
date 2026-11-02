@@ -31,7 +31,7 @@ func Tokens() []Token {
 		{"eip155:137", "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359", "USDC", "USD Coin", "issuer-native", 6, ClassStablecoin, "", ""},
 		{"eip155:1", "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a", "AAPLx", "Apple xStock", "backed-xstock", 18, ClassTokenizedEquity, "AAPL", "Backed Assets"},
 		{"eip155:1", "0xcf2810d523c2efb7e4d3afa2629e635d2032ddb4", "TSLAX", "Tesla xStock", "backed-xstock", 18, ClassTokenizedEquity, "TSLA", "Backed Assets"},
-		{"eip155:1", "0xe9fa01197b7e836982a1cab03fe591f7e331e313", "AMATx", "Applied Materials xStock", "backed-xstock", 18, ClassTokenizedEquity, "AMAT", "Backed Assets"},
+		{"eip155:1", "0xe9fa01197b7e836982a1cab03fe591f7e331e313", "AMATx", "Applied Materials, Inc. xStock", "backed-xstock", 18, ClassTokenizedEquity, "AMAT", "Backed Assets"},
 	}
 }
 
